@@ -9,7 +9,13 @@
 #include "db_parser.h"
 #include "product_parser.h"
 #include "util.h"
-#include "mydatastore.h"
+#include "MyDataStore.h"
+#include "db_parser.h"
+#include "user.h"
+#include <cctype>
+
+
+/*remeber to replace dump with hits*/
 
 using namespace std;
 struct ProdNameSorter {
@@ -19,8 +25,10 @@ struct ProdNameSorter {
 };
 void displayProducts(vector<Product*>& hits);
 
+
 int main(int argc, char* argv[])
 {
+
     if(argc < 2) {
         cerr << "Please specify a database file" << endl;
         return 1;
@@ -31,7 +39,6 @@ int main(int argc, char* argv[])
      *  DataStore type to your derived type
      ****************/
     MyDataStore ds;
-
 
 
     // Instantiate the individual section and product parsers we want
@@ -51,7 +58,7 @@ int main(int argc, char* argv[])
         cerr << "Error parsing!" << endl;
         return 1;
     }
-
+    
     cout << "=====================================" << endl;
     cout << "Menu: " << endl;
     cout << "  AND term term ...                  " << endl;
@@ -65,6 +72,7 @@ int main(int argc, char* argv[])
     vector<Product*> hits;
     bool done = false;
     while(!done) {
+
         cout << "\nEnter command: " << endl;
         string line;
         getline(cin,line);
@@ -101,8 +109,40 @@ int main(int argc, char* argv[])
                 done = true;
             }
 	    /* Add support for other commands here */
+           else if (cmd == "ADD") {
+          string username;
+          int hitIndex;
 
+          if (ss >> username >> hitIndex) {
+              if (hitIndex > 0 && hitIndex <= hits.size() && ds.userNameContains(username)) {
+                  ds.addToCart(username, hits[hitIndex - 1]); 
+              } else {
+                  cout << "Invalid request" << endl;
+              }
+          } else {
+              cout << "Invalid request" << endl;
+          }
+         }
 
+            else if (cmd == "VIEWCART") {
+                string username;
+                if (ss >> username) {
+                    ds.viewCart(username);
+               
+                } else {
+                    cout << "Invalid request" << endl;
+                }
+            }
+
+                else if (cmd == "BUYCART") {
+            string username;
+            if (ss >> username) {
+                ds.buyCart(username);
+              
+            } else {
+                cout << "Invalid request" << endl;
+            }
+            }
 
 
             else {
@@ -110,9 +150,11 @@ int main(int argc, char* argv[])
             }
         }
 
-    }
+
+  }
     return 0;
 }
+
 
 void displayProducts(vector<Product*>& hits)
 {

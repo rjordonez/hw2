@@ -1,4 +1,5 @@
 #include "book.h"
+#include "util.h"
 #include <sstream>
 
 using namespace std;
@@ -7,18 +8,22 @@ Book::~Book(){}
 
 string Book::displayString() const {
     stringstream ss;
-    ss << name_ << "\n" << "Authors Name: " << authorsName_ << " ISBN: " << ISBN_ << " Price: " << price_ << " Qty: " << qty_;
+    ss << name_ << "\n" << "Author: " << authorsName_ << " ISBN: " << ISBN_ << std::endl << price_ << " "<<qty_<<" left.";
     return ss.str();
 }
 
 void Book::dump(ostream& os) const {
     Product::dump(os); 
-    os << "Authors Name: " << authorsName_ <<  " ISBN: " << ISBN_ <<  endl;
+    os << ISBN_ << "\n" << authorsName_ << "\n";
 }
 set<string> Book::keywords() const {
-    set<string> kw;
-    kw.insert(name_);
-    kw.insert(authorsName_);
-    kw.insert(ISBN_);
-    return kw;
+    std::set<std::string> keywords;
+    std::set<std::string> nameKeywords = parseStringToWords(name_);
+    std::set<std::string> authorKeywords = parseStringToWords(authorsName_);
+
+    keywords = setUnion(nameKeywords, authorKeywords);
+
+    keywords.insert(ISBN_);
+
+    return keywords;
 }

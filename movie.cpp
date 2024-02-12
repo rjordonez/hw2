@@ -1,4 +1,5 @@
 #include "movie.h"
+#include "util.h"
 #include <sstream>
 
 using namespace std;
@@ -10,18 +11,27 @@ Movie::~Movie() {}
 
 string Movie::displayString() const {
     stringstream ss;
-    ss << name_ << "\n" << "Genre: " << genre_ << "Rating: " << rating_ << " Price: " << price_ << " Qty: " << qty_;
+    ss << name_ << "\n" << "Genre: " << genre_ << " Rating: " << rating_ << std::endl << price_ << " "<<  qty_ << " left.";
     return ss.str();
 }
 
 void Movie::dump(ostream& os) const {
     Product::dump(os); 
-    os << "Genre: " << genre_ << endl;
+    os << genre_ <<"\n"<<rating_<< "\n";
 }
 set<string> Movie::keywords() const {
-    set<string> kw;
-    kw.insert(name_);
-    kw.insert(genre_);
-    return kw;
+    
+    std::set<std::string> keywords;
+    std::set<std::string> nameKeywords = parseStringToWords(name_);
+    std::set<std::string> genreKeywords = parseStringToWords(genre_);
+    std::set<std::string> ratingKeywords = parseStringToWords(rating_);
+
+
+    keywords = setUnion(nameKeywords, genreKeywords);
+    keywords = setUnion(keywords, ratingKeywords);
+    
+
+    
+    return keywords;
 }
 

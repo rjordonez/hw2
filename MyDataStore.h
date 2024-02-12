@@ -1,7 +1,11 @@
-#ifndef MYDATASTORE.H
-#define MYDATASTORE.H
+#ifndef MYDATASTORE_H
+#define MYDATASTORE_H
 
 #include "datastore.h"
+#include <queue>
+#include <map>
+#include "product_parser.h"
+#include "user.h"
 class MyDataStore: public DataStore{
     public:
     MyDataStore();
@@ -24,14 +28,17 @@ class MyDataStore: public DataStore{
     /**
      * Reproduce the database file from the current Products and User values
      */
+    bool userNameContains(const std::string& username);
     void dump(std::ostream& ofile);
+    void addToCart(const std::string& username, Product* product);
+    void viewCart(const std::string& username);
+    void buyCart(const std::string& username);
     
-    // std::set<std::string> convertToSet(std::vector<std::string> v);
-
     private:
-    std::set<User*> userSet;
+    std::map<std::string, User*> userMap;
     std::set<Product*> productSet;
-
+    std::map<std::string, std::queue<Product*>> userCarts;
+    std::queue<Product*> tempStorage;
 };
 
 #endif
