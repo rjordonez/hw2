@@ -20,7 +20,7 @@ for(std::pair<const std::string, std::queue<Product*>> &pair : userCarts) {
         cart.pop(); 
 }
 }
-
+}
 void MyDataStore::addProduct(Product* p)
 {
     productSet.insert(p);
